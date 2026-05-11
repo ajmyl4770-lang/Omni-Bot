@@ -21,11 +21,31 @@ HEADERS = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
 # --- وظائف التوليد ---
 
-# 1. توليد صور فورية (بدون انتظار وبدون سيرفر مشغول)
-def generate_fast_image(prompt):
-    url = f"https://pollinations.ai{requests.utils.quote(prompt)}?width=1024&height=1024&nologo=true"
-    response = requests.get(url)
-    return response.content if response.status_code == 200 else None
+async def image_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    prompt = " ".join(context.args)
+    if not prompt: 
+        return await update.message.reply_text("يرجى كتابة وصف للصورة.")
+    
+    await update.message.reply_text("🎨 جاري التصميم الفوري... انتظر ثواني")
+    
+    try:
+        import random
+        seed = random.randint(1, 1000000)
+        # الرابط المباشر للصورة
+        image_url = f"https://pollinations.ai{requests.utils.quote(prompt)}?width=1024&height=1024&nologo=true&seed={seed}"
+        
+        # تحميل الصورة من الرابط أولاً للتأكد من سلامتها
+        img_response = requests.get(image_url, timeout=30)
+        if img_response.status_code == 200:
+            # إرسال الصورة كملف بايتات (Buffer) لضمان وصولها لتيليجرام
+            await update.message.reply_photo(photo=io.BytesIO(img_response.content), caption="✅ تم توليد صورتك بنجاح!")
+        else:
+            await update.message.reply_text("❌ فشل السيرفر في توليد الصورة، جرب وصفاً أقصر.")
+            
+    except Exception as e:
+        print(f"Error: {e}")
+        await update.message.reply_text("❌ حدث خطأ في الاتصال، حاول مرة أخرى.")
+
 
 # 2. توليد فيديو وموسيقى (Hugging Face)
 def query_hf(prompt, model_url):
