@@ -25,12 +25,13 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 HF_API_TOKEN = os.getenv("HF_API_TOKEN")
 HEADERS = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
-# روابط النماذج
+# # روابط نماذج بديلة وسريعة جداً
 MODELS = {
     "image": "https://huggingface.co",
     "video": "https://huggingface.co",
     "music": "https://huggingface.co"
 }
+
 
 def query_hf(prompt, model_url):
     try:
