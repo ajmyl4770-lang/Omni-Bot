@@ -3,9 +3,10 @@ import io
 from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 
-# --- الإعدادات (ضع التوكنات الخاصة بك هنا) ---
-TELEGRAM_TOKEN = "YOUR_TELEGRAM_BOT_TOKEN"
-HF_API_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
+import os
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+HF_API_TOKEN = os.getenv("HF_API_TOKEN")
+
 
 HEADERS = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
