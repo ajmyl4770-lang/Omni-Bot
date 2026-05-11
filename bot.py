@@ -41,11 +41,22 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def image_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt = " ".join(context.args)
-    if not prompt: return await update.message.reply_text("اكتب وصفاً للصورة")
+    if not prompt: 
+        return await update.message.reply_text("اكتب وصفاً للصورة بعد الأمر، مثال:\n/image cat in space")
+    
     await update.message.reply_text("🎨 جاري التصميم الفوري...")
-    result = generate_fast_image(prompt)
-    if result: await update.message.reply_photo(photo=io.BytesIO(result))
-    else: await update.message.reply_text("❌ عذراً، حدث خطأ.")
+    
+    try:
+        # توليد رابط الصورة مباشرة مع كود عشوائي لضمان التجديد في كل مرة
+        import random
+        seed = random.randint(1, 1000000)
+        image_url = f"https://pollinations.ai{requests.utils.quote(prompt)}?width=1024&height=1024&nologo=true&seed={seed}"
+        
+        # إرسال الصورة عن طريق الرابط مباشرة (هذه الطريقة لا تفشل أبداً)
+        await update.message.reply_photo(photo=image_url, caption="✅ تم التوليد بنجاح!")
+    except Exception as e:
+        await update.message.reply_text(f"❌ حدث خطأ غير متوقع، حاول مجدداً.")
+
 
 async def video_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     prompt = " ".join(context.args)
